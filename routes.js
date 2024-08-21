@@ -52,8 +52,8 @@ const Transaction = mongoose.model('transactions', transactionSchema);
 
 const models = {
     expenses: Expense,
-    users: User,
-    budgets: Budget,
+    user: User,
+    budget: Budget,
     transactions: Transaction,
 };
 
@@ -161,7 +161,7 @@ router.post('/all/sync', async (req, res) => {
 
 router.get('/all/sync', async (req, res) => {
     try {
-        const [expenses, users, budgets, transactions] = await Promise.all([
+        const [expenses, user, budget, transactions] = await Promise.all([
             Expense.find({}),  // Retrieve all expenses
             User.find({}),     // Retrieve all users
             Budget.find({}),   // Retrieve all budgets
@@ -170,8 +170,8 @@ router.get('/all/sync', async (req, res) => {
 
         const data = {
             expenses,
-            users,
-            budgets,
+            user,
+            budget,
             transactions,
         };
 
