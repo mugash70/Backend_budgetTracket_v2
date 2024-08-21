@@ -65,9 +65,10 @@ router.route('/:table')
         try {
             const { table } = req.params;
             const { monthyear, userId } = req.query;
+            console.log(table);
+            console.log(monthyear, userId);
             const Model = models[table];
             if (!Model) return res.status(404).send('Table not found');
-
             const query = {};
             if (monthyear) {
                 const [year, month] = monthyear.split('-');
