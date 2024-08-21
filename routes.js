@@ -148,8 +148,8 @@ router.post('/all/sync', async (req, res) => {
         const sqliteData = req.body;
         await Promise.all([
             Expense.insertMany(sqliteData.expenses),
-            User.insertMany(sqliteData.users),
-            Budget.insertMany(sqliteData.budgets),
+            User.insertMany(sqliteData.user),
+            Budget.insertMany(sqliteData.budget),
             Transaction.insertMany(sqliteData.transactions),
         ]);
 
