@@ -146,6 +146,7 @@ router.route('/:table')
 router.post('/all/sync', async (req, res) => {
     try {
         const sqliteData = req.body;
+        console.log(sqliteData);
         await Promise.all([
             Expense.insertMany(sqliteData.expenses),
             User.insertMany(sqliteData.user),
