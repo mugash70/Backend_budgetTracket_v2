@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 //const session = require('express-session')
 const mongoose = require('mongoose');
-const uri = "mongodb+srv://cashmate:cashmate@cashmate.powzf.mongodb.net/?retryWrites=true&w=majority&appName=cashmate";
+// const uri = "mongodb+srv://cashmate:cashmate@cashmate.powzf.mongodb.net/?retryWrites=true&w=majority&appName=cashmate";
+const uri = "mongodb://localhost:27017/cashmate";
 mongoose.connect(uri)
             .then(() => console.log('MongoDB connected successfully'))
             .catch((err) => console.error('MongoDB connection error:', err));
@@ -45,8 +46,8 @@ const transactionSchema = new mongoose.Schema({
 });
 
 const Expense = mongoose.model('expenses', expenseSchema);
-const User = mongoose.model('user', userSchema);
-const Budget = mongoose.model('budget', budgetSchema);
+const User = mongoose.model('users', userSchema);
+const Budget = mongoose.model('budgets', budgetSchema);
 const Transaction = mongoose.model('transactions', transactionSchema);
 
 const models = {
@@ -65,17 +66,33 @@ router.route('/:table')
         try {
             const { table } = req.params;
             const { monthyear, userId } = req.query;
-            console.log(table);
-            console.log(monthyear, userId);
+       
             const Model = models[table];
             if (!Model) return res.status(404).send('Table not found');
             const query = {};
             if (monthyear) {
                 const [year, month] = monthyear.split('-');
-                query.date = {
-                    $gte: new Date(`${year}-${month}-01T00:00:00.000Z`),
-                    $lt: new Date(`${year}-${month}-01T00:00:00.000Z`).setMonth(new Date(`${year}-${month}-01T00:00:00.000Z`).getMonth() + 1),
-                };
+                const startDate = new Date(`${year}-${month}-01T00:00:00.000Z`);
+                const endDate = new Date(startDate);
+                endDate.setMonth(startDate.getMonth() + 1);
+
+               switch (table) {
+                    // case 'expenses':
+                    //     query.date = { $gte: startDate, $lt: endDate };
+                    //     break;
+                    case 'budgets':
+                        query.bud_date = { $gte: startDate, $lt: endDate };
+                        break;
+                    case 'transactions':
+                        query.trans_month = { $gte: startDate, $lt: endDate };
+                        break;
+                    case 'users':
+                        query.created_date = { $gte: startDate, $lt: endDate };
+                        break;
+                    default:
+                        query.date = { $gte: startDate, $lt: endDate };
+                        break;
+                }
             }
             if (userId) {
                 query.user_id = userId;
