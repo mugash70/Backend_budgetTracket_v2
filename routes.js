@@ -58,7 +58,7 @@ const models = {
 
 
 
-router.get("/", (req, res) => res.send("Express on Vercel"));
+
 // Define API routes
 router.route('/:table')
     .get(async (req, res) => {
