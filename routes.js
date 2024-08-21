@@ -46,8 +46,8 @@ const transactionSchema = new mongoose.Schema({
 });
 
 const Expense = mongoose.model('expenses', expenseSchema);
-const User = mongoose.model('users', userSchema);
-const Budget = mongoose.model('budgets', budgetSchema);
+const User = mongoose.model('user', userSchema);
+const Budget = mongoose.model('budget', budgetSchema);
 const Transaction = mongoose.model('transactions', transactionSchema);
 
 const models = {
@@ -80,13 +80,13 @@ router.route('/:table')
                     // case 'expenses':
                     //     query.date = { $gte: startDate, $lt: endDate };
                     //     break;
-                    case 'budgets':
+                    case 'budget':
                         query.bud_date = { $gte: startDate, $lt: endDate };
                         break;
                     case 'transactions':
                         query.trans_month = { $gte: startDate, $lt: endDate };
                         break;
-                    case 'users':
+                    case 'user':
                         query.created_date = { $gte: startDate, $lt: endDate };
                         break;
                     default:
