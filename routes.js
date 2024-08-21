@@ -4,7 +4,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const uri = "mongodb+srv://cashmate:cashmate@cashmate.powzf.mongodb.net/?retryWrites=true&w=majority&appName=cashmate";
 // const uri = "mongodb://localhost:27017/cashmate";
-mongoose.connect(uri)
+mongoose.connect(uri,{dbName: 'cashmate'})
             .then(() => console.log('MongoDB connected successfully'))
             .catch((err) => console.error('MongoDB connection error:', err));
 
@@ -18,7 +18,7 @@ const expenseSchema = new mongoose.Schema({
     date: Date,
     amount: Number,
     budget_amount: Number,
-});
+}, { collection: 'expenses' });
 
 const userSchema = new mongoose.Schema({
     user_id: String,
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     user_email: String,
     user_status: String,
     user_name: String,
-});
+}, { collection: 'user' }); 
 
 const budgetSchema = new mongoose.Schema({
     bud_id: Number,
@@ -34,7 +34,7 @@ const budgetSchema = new mongoose.Schema({
     bud_date: Date,
     bud_amount: Number,
     bud_name: String,
-});
+},{ collection: 'budget' }); 
 
 const transactionSchema = new mongoose.Schema({
     trans_id: Number,
@@ -43,7 +43,7 @@ const transactionSchema = new mongoose.Schema({
     trans_balance: Number,
     trans_target: Number,
     trans_budget: Number,
-});
+}, { collection: 'transactions' });
 
 const Expense = mongoose.model('expenses', expenseSchema);
 const User = mongoose.model('user', userSchema);
