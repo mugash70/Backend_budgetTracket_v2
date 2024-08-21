@@ -8,6 +8,7 @@ mongoose.connect(uri)
             .catch((err) => console.error('MongoDB connection error:', err));
 
 // Define MongoDB schemas
+// Define MongoDB schemas
 const expenseSchema = new mongoose.Schema({
     exp_id: Number,
     user_id: Number,
