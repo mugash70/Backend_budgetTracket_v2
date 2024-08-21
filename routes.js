@@ -57,7 +57,7 @@ const models = {
 
 
 
-
+router.get("/", (req, res) => res.send("Express on Vercel"));
 // Define API routes
 router.route('/:table')
     .get(async (req, res) => {
@@ -140,5 +140,26 @@ router.post('/all/sync', async (req, res) => {
     }
 });
 
+router.get('/all/sync', async (req, res) => {
+    try {
+        const [expenses, users, budgets, transactions] = await Promise.all([
+            Expense.find({}),  // Retrieve all expenses
+            User.find({}),     // Retrieve all users
+            Budget.find({}),   // Retrieve all budgets
+            Transaction.find({}), // Retrieve all transactions
+        ]);
+
+        const data = {
+            expenses,
+            users,
+            budgets,
+            transactions,
+        };
+
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
 
 module.exports = router;
