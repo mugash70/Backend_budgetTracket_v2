@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 //const session = require('express-session')
 const mongoose = require('mongoose');
-// const uri = "mongodb+srv://cashmate:cashmate@cashmate.powzf.mongodb.net/?retryWrites=true&w=majority&appName=cashmate";
-const uri = "mongodb://localhost:27017/cashmate";
+const uri = "mongodb+srv://cashmate:cashmate@cashmate.powzf.mongodb.net/?retryWrites=true&w=majority&appName=cashmate";
+// const uri = "mongodb://localhost:27017/cashmate";
 mongoose.connect(uri)
             .then(() => console.log('MongoDB connected successfully'))
             .catch((err) => console.error('MongoDB connection error:', err));
