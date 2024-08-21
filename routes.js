@@ -12,7 +12,7 @@ mongoose.connect(uri)
 // Define MongoDB schemas
 const expenseSchema = new mongoose.Schema({
     exp_id: Number,
-    user_id: Number,
+    user_id: String,
     name: String,
     note: String,
     date: Date,
