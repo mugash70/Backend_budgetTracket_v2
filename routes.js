@@ -57,25 +57,7 @@ const models = {
     transactions: Transaction,
 };
 
-var switch_this =(table, startDate, endDate)=>{
-    let query = {};
-    switch (table) {
-        case 'budget':
-            query.bud_date = { $gte: startDate, $lt: endDate };
-            break;
-        case 'transactions':
-            query.trans_month = { $gte: startDate, $lt: endDate };
-            break;
-        case 'user':
-            query.created_date = { $gte: startDate, $lt: endDate };
-            break;
-        default:
-            query.date = { $gte: startDate, $lt: endDate };
-            break;
-    }
 
-    // return query
-}
 
 
 // Define API routes
