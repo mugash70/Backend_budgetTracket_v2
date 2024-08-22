@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 //const session = require('express-session')
 const mongoose = require('mongoose');
-const uri = "mongodb+srv://cashmate:cashmate@cashmate.powzf.mongodb.net/?retryWrites=true&w=majority&appName=cashmate";
-// const uri = "mongodb://localhost:27017/cashmate";
+// const uri = "mongodb+srv://cashmate:cashmate@cashmate.powzf.mongodb.net/?retryWrites=true&w=majority&appName=cashmate";
+const uri = "mongodb://localhost:27017/cashmate";
 mongoose.connect(uri,{dbName: 'cashmate'})
             .then(() => console.log('MongoDB connected successfully'))
             .catch((err) => console.error('MongoDB connection error:', err));
@@ -57,7 +57,25 @@ const models = {
     transactions: Transaction,
 };
 
+var switch_this =(table, startDate, endDate)=>{
+    let query = {};
+    switch (table) {
+        case 'budget':
+            query.bud_date = { $gte: startDate, $lt: endDate };
+            break;
+        case 'transactions':
+            query.trans_month = { $gte: startDate, $lt: endDate };
+            break;
+        case 'user':
+            query.created_date = { $gte: startDate, $lt: endDate };
+            break;
+        default:
+            query.date = { $gte: startDate, $lt: endDate };
+            break;
+    }
 
+    // return query
+}
 
 
 // Define API routes
@@ -69,17 +87,13 @@ router.route('/:table')
        
             const Model = models[table];
             if (!Model) return res.status(404).send('Table not found');
-            const query = {};
+            let  query = {};
             if (monthyear) {
                 const [year, month] = monthyear.split('-');
                 const startDate = new Date(`${year}-${month}-01T00:00:00.000Z`);
                 const endDate = new Date(startDate);
                 endDate.setMonth(startDate.getMonth() + 1);
-
-               switch (table) {
-                    // case 'expenses':
-                    //     query.date = { $gte: startDate, $lt: endDate };
-                    //     break;
+                switch (table) {
                     case 'budget':
                         query.bud_date = { $gte: startDate, $lt: endDate };
                         break;
@@ -118,11 +132,40 @@ router.route('/:table')
     .put(async (req, res) => {
         try {
             const { table } = req.params;
-            const { id } = req.query;
-            let body = req.body;
+            const { userId, date } = req.query;
+            const body = req.body;
             const Model = models[table];
+            
             if (!Model) return res.status(404).send('Table not found');
-            const result = await Model.findOneAndUpdate({ _id: id }, body, { new: true });
+    
+            let query = {};
+            if (date) {
+                const [year, month] = date.split('-');
+                const startDate = new Date(`${year}-${month}-01T00:00:00.000Z`);
+                const endDate = new Date(startDate);
+                endDate.setMonth(startDate.getMonth() + 1);
+    
+                switch (table) {
+                    case 'budget':
+                        query.bud_date = { $gte: startDate, $lt: endDate };
+                        break;
+                    case 'transactions':
+                        query.trans_month = { $gte: startDate, $lt: endDate };
+                        break;
+                    case 'user':
+                        query.created_date = { $gte: startDate, $lt: endDate };
+                        break;
+                    default:
+                        query.date = { $gte: startDate, $lt: endDate };
+                        break;
+                }
+            }
+            if (userId) {
+                query.user_id = userId;
+            }
+            console.log(query)
+            console.log(body)
+            const result = await Model.findOneAndUpdate(query, body, { new: true });
             if (!result) return res.status(404).send('Record not found');
             res.status(200).json(result);
         } catch (error) {
