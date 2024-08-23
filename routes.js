@@ -65,8 +65,7 @@ router.route('/:table')
     .get(async (req, res) => {
         try {
             const { table } = req.params;
-            const { monthyear, userId,user_id } = req.query;
-       
+            const { monthyear, userId} = req.query;
             const Model = models[table];
             if (!Model) return res.status(404).send('Table not found');
             let  query = {};
@@ -93,7 +92,7 @@ router.route('/:table')
             }
             }
             if (userId) {
-                query.user_id = userId?userId:user_id;
+                query.user_id = userId;
             }
             const data = await Model.find(query);
             res.status(200).json(data);
