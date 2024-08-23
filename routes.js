@@ -65,35 +65,35 @@ router.route('/:table')
     .get(async (req, res) => {
         try {
             const { table } = req.params;
-            const { monthyear, userId } = req.query;
+            const { monthyear, userId,user_id } = req.query;
        
             const Model = models[table];
             if (!Model) return res.status(404).send('Table not found');
             let  query = {};
             if (monthyear) {
                 if(table != 'user'){
-                const [year, month] = monthyear.split('-');
-                const startDate = new Date(`${year}-${month}-01T00:00:00.000Z`);
-                const endDate = new Date(startDate);
-                endDate.setMonth(startDate.getMonth() + 1);
-                switch (table) {
-                    case 'budget':
-                        query.bud_date = { $gte: startDate, $lt: endDate };
-                        break;
-                    case 'transactions':
-                        query.trans_month = { $gte: startDate, $lt: endDate };
-                        break;
-                    case 'user':
-                        query.created_date = { $gte: startDate, $lt: endDate };
-                        break;
-                    default:
-                        query.date = { $gte: startDate, $lt: endDate };
-                        break;
-                }
+                    const [year, month] = monthyear.split('-');
+                    const startDate = new Date(`${year}-${month}-01T00:00:00.000Z`);
+                    const endDate = new Date(startDate);
+                    endDate.setMonth(startDate.getMonth() + 1);
+                    switch (table) {
+                        case 'budget':
+                            query.bud_date = { $gte: startDate, $lt: endDate };
+                            break;
+                        case 'transactions':
+                            query.trans_month = { $gte: startDate, $lt: endDate };
+                            break;
+                        // case 'user':
+                        //     query.created_date = { $gte: startDate, $lt: endDate };
+                        //     break;
+                        default:
+                            query.date = { $gte: startDate, $lt: endDate };
+                            break;
+                    }
             }
             }
             if (userId) {
-                query.user_id = userId;
+                query.user_id = userId?userId:user_id;
             }
             const data = await Model.find(query);
             res.status(200).json(data);
