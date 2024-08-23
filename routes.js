@@ -4,9 +4,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const uri = "mongodb+srv://cashmate:cashmate@cashmate.powzf.mongodb.net/?retryWrites=true&w=majority&appName=cashmate";
 // const uri = "mongodb://localhost:27017/cashmate";
-mongoose.connect(uri,{dbName: 'cashmate'})
-            .then(() => console.log('MongoDB connected successfully'))
-            .catch((err) => console.error('MongoDB connection error:', err));
+mongoose.connect(uri,{dbName: 'cashmate'});
 
 // Define MongoDB schemas
 // Define MongoDB schemas
@@ -65,7 +63,9 @@ router.route('/:table')
     .get(async (req, res) => {
         try {
             const { table } = req.params;
-            const { monthyear, userId} = req.query;
+            const { monthyear, userId,user_id} = req.query;
+            let user_x =user_id ? user_id :userId
+
             const Model = models[table];
             if (!Model) return res.status(404).send('Table not found');
             let  query = {};
@@ -91,8 +91,8 @@ router.route('/:table')
                     }
             }
             }
-            if (userId) {
-                query.user_id = userId;
+            if (user_x) {
+                query.user_id = user_x;
             }
             const data = await Model.find(query);
             res.status(200).json(data);
@@ -115,7 +115,10 @@ router.route('/:table')
     .put(async (req, res) => {
         try {
             const { table } = req.params;
-            const { userId, date } = req.query;
+            // const { userId, date } = req.query;
+            const { date, userId,user_id} = req.query;
+            let user_x =user_id ? user_id :userId
+          
             const body = req.body;
             const Model = models[table];
             
@@ -142,11 +145,9 @@ router.route('/:table')
                         break;
                 }
             }
-            if (userId) {
-                query.user_id = userId;
+            if (user_x) {
+                query.user_id = user_x;
             }
-            console.log(query)
-            console.log(body)
             const result = await Model.findOneAndUpdate(query, body, { new: true });
             if (!result) return res.status(404).send('Record not found');
             res.status(200).json(result);
@@ -171,7 +172,6 @@ router.route('/:table')
 router.post('/all/sync', async (req, res) => {
     try {
         const sqliteData = req.body;
-        console.log(sqliteData);
         await Promise.all([
             Expense.insertMany(sqliteData.expenses),
             User.insertMany(sqliteData.user),
