@@ -71,6 +71,7 @@ router.route('/:table')
             if (!Model) return res.status(404).send('Table not found');
             let  query = {};
             if (monthyear) {
+                if(table != 'user'){
                 const [year, month] = monthyear.split('-');
                 const startDate = new Date(`${year}-${month}-01T00:00:00.000Z`);
                 const endDate = new Date(startDate);
@@ -89,6 +90,7 @@ router.route('/:table')
                         query.date = { $gte: startDate, $lt: endDate };
                         break;
                 }
+            }
             }
             if (userId) {
                 query.user_id = userId;
@@ -126,7 +128,6 @@ router.route('/:table')
                 const startDate = new Date(`${year}-${month}-01T00:00:00.000Z`);
                 const endDate = new Date(startDate);
                 endDate.setMonth(startDate.getMonth() + 1);
-    
                 switch (table) {
                     case 'budget':
                         query.bud_date = { $gte: startDate, $lt: endDate };
