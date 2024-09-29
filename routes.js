@@ -159,12 +159,18 @@ router.route('/:table')
         try {
             const { table } = req.params;
             // const { id } = req.query;
-            const { user_id, monthYear } = req.query;
+            const { user_id, monthyear } = req.query;
+
+            // console.log(table);
+            // console.log(user_id, monthyear);
             const Model = models[table];
             if (!Model) return res.status(404).send('Table not found');
-            const [month, year] = monthYear.split('-');
+
+            const [month, year] = monthyear.split('-');
+
             const startDate = new Date(year, month - 1, 1);
             const endDate = new Date(year, month, 1);
+
             const result = await Model.deleteMany({
                 user_id: user_id,
                 date: { $gte: startDate, $lt: endDate } 
